@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Customer Portal</title>
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+<style>
+body{
+background:skyblue;
+}
+.content{
+max-width:300px;
+margin:auto;
+background:white;
+padding:10px;
+}
+</style>
+</head>
+<body>
+<div class="content">
+  <h1>Customer Portal</h1>
+
+  <button onclick="openPolicySelectionPage()">Policy Selection</button>
+  <button onclick="openViewPolicyPage()">View Policy</button>
+</div>
+
+  <script>
+    function openPolicySelectionPage() {
+      window.location.href = "policySelection.html";
+    }
+
+    function openViewPolicyPage() {
+      window.location.href = "viewPolicy.html";
+    }
+  </script>
+</body>
+</html>
