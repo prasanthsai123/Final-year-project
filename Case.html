@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Customer Registration</title>
+  <style>
+    .success {
+      color: green;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+    }
+
+    .pagination {
+      text-align: center;
+    }
+
+    .pagination a {
+      text-decoration: none;
+      display: inline-block;
+      padding: 8px 16px;
+    }
+
+    .pagination a:hover {
+      background-color: #ddd;
+      color: black;
+    }
+
+    .pagination a.active {
+      background-color: #4CAF50;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>Customer Registration</h1>
+
+  <form id="registrationForm" onsubmit="registerCustomer(event)">
+    <label for="customerName">Customer Name:</label>
+    <input type="text" id="customerName" maxlength="50" required><br><br>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" required><br><br>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" maxlength="30" required><br><br>
+
+    <label for="address">Address:</label>
+    <textarea id="address" maxlength="100" required></textarea><br><br>
+
+    <label for="nomineeName">Nominee Name:</label>
+    <input type="text" id="nomineeName" maxlength="50" required><br><br>
+
+    <label for="relationship">Relationship:</label>
+    <input type="text" id="relationship" required><br><br>
+
+    <label for="contactNumber">Contact Number:</label>
+    <input type="text" id="contactNumber" maxlength="10" required><br><br>
+
+    <button type="submit">Register</button>
+  </form>
+
+  <div id="acknowledgment" style="display: none;">
+    <h2 class="success">Customer Registration successful.</h2>
+    <p>Customer ID: <span id="customerId"></span></p>
+    <p>Customer Name: <span id="customerNameAck"></span></p>
+    <p>Email: <span id="emailAck"></span></p>
+  </div>
+
+  <script>
+    function registerCustomer(event) {
+      event.preventDefault();
+      const customerId = Math.floor(Math.random() * 1000000) + 1;
+      const customerName = document.getElementById('customerName').value;
+      const email = document.getElementById('email').value;
+
+      document.getElementById('customerId').textContent = customerId;
+      document.getElementById('customerNameAck').textContent = customerName;
+      document.getElementById('emailAck').textContent = email;
+
+      document.getElementById('registrationForm').reset();
+      document.getElementById('registrationForm').style.display = 'none';
+      document.getElementById('acknowledgment').style.display = 'block';
+    }
+  </script>
+
+  <h1>Customer Login</h1>
+
+  <form id="loginForm" onsubmit="login(event)">
+    <label for="userId">User ID:</label>
+    <input type="text" id="userId" required><br><br>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" required><br><br>
+
+    <button type="submit">Login</button>
+  </form>
+
+  <div id="policySelection" style="display: none;">
+    <h2>Select Policy</h2>
+
+    <label for="policyType">Policy Type:</label>
+    <select id="policyType" onchange="populatePolicyTitles()">
+      <option value="">Select Policy Type</option>
+      <option value="GeneralInsurance">General Insurance</option>
+      <option value="HealthInsurance">Health Insurance</option>
+      <option value="MotorInsurance">Motor Insurance</option>
+    </select><br><br>
+
+    <label for="policyTitle">Policy Title:</label>
+    <select id="policyTitle" onchange="displayPolicyDetails()" disabled>
+      <option value="">Select Policy Title</option>
+    </select><br><br>
+
+    <label for="sumAssured">Sum Assured:</label>
+    <input type="text" id="sumAssured" disabled><br><br>
+
+    <label for="premiumAmount">Premium Amount:</label>
+    <input type="text" id="premiumAmount" disabled><br><br>
+
+    <label for="policyTerm">Policy Term:</label>
+    <input type="text" id="policyTerm" disabled><br><br>
+
+    <button type="submit" onclick="selectPolicy()">Select Policy</button>
+  </div>
+
+  <h1>My Policies</h1>
+
+  <table id="policyTable">
+    <thead>
+      <tr>
+        <th>Policy No</th>
+        <th>Commence Date</th>
+        <th>Status</th>
+        <th>Policy Title</th>
+        <th>Premium amount</th>
+        <th>Next Due Date</th>
+        <th>Sum Assured</th>
+        <th>Nominee Registered Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Policy rows will be dynamically added here -->
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <a href="#" onclick="changePage(-1)"><< Prev</a>
+    <a href="#" onclick="changePage(1)">Next >></a>
+  </div>
+
+  <script>
+    let currentPage = 1;
+    const pageSize = 5;
+
+    function login(event) {
+      event.preventDefault();
+      document.getElementById('loginForm').reset();
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('policySelection').style.display = 'block';
+    }
+
+    function populatePolicyTitles() {
+      const policyType = document.getElementById('policyType').value;
+      const policyTitleSelect = document.getElementById('policyTitle');
+      policyTitleSelect.disabled = false;
+      policyTitleSelect.innerHTML = '<option value="">Select Policy Title</option>';
+
+      if (policyType === 'GeneralInsurance') {
+        addPolicyTitleOption(policyTitleSelect, 'Policy 1');
+        addPolicyTitleOption(policyTitleSelect, 'Policy 2');
+        addPolicyTitleOption(policyTitleSelect, 'Policy 3');
+      } else if (policyType === 'HealthInsurance') {
+        addPolicyTitleOption(policyTitleSelect, 'Policy 4');
+        addPolicyTitleOption(policyTitleSelect, 'Policy 5');
+        addPolicyTitleOption(policyTitleSelect, 'Policy 6');
+      } else if (policyType === 'MotorInsurance') {
+        addPolicyTitleOption(policyTitleSelect, 'Policy 7');
+        addPolicyTitleOption(policyTitleSelect, 'Policy 8');
+        addPolicyTitleOption(policyTitleSelect, 'Policy 9');
+      }
+    }
+
+    function addPolicyTitleOption(selectElement, title) {
+      const option = document.createElement('option');
+      option.value =The response got cut off. Here's the complete code:
+
+```html
+        option.textContent = title;
+      selectElement.appendChild(option);
+    }
+
+    function displayPolicyDetails() {
+      const policyTitle = document.getElementById('policyTitle').value;
+      const sumAssured = getSumAssured(policyTitle);
+      const premiumAmount = getPremiumAmount(policyTitle);
+      const policyTerm = getPolicyTerm(policyTitle);
+
+      document.getElementById('sumAssured').value = sumAssured;
+      document.getElementById('premiumAmount').value = premiumAmount;
+      document.getElementById('policyTerm').value = policyTerm;
+    }
+
+    function getSumAssured(policyTitle) {
+      // Retrieve sum assured from the master list of policies based on the policy title
+      // Replace this with your actual implementation
+      if (policyTitle === 'Policy 1') {
+        return '100,000';
+      } else if (policyTitle === 'Policy 2') {
+        return '200,000';
+      } else if (policyTitle === 'Policy 3') {
+        return '300,000';
+      } else if (policyTitle === 'Policy 4') {
+        return '400,000';
+      } else if (policyTitle === 'Policy 5') {
+        return '500,000';
+      } else if (policyTitle === 'Policy 6') {
+        return '600,000';
+      } else if (policyTitle === 'Policy 7') {
+        return '700,000';
+      } else if (policyTitle === 'Policy 8') {
+        return '800,000';
+      } else if (policyTitle === 'Policy 9') {
+        return '900,000';
+      } else {
+        return '';
+      }
+    }
+
+    function getPremiumAmount(policyTitle) {
+      // Retrieve premium amount from the master list of policies based on the policy title
+      // Replace this with your actual implementation
+      if (policyTitle === 'Policy 1') {
+        return '500';
+      } else if (policyTitle === 'Policy 2') {
+        return '600';
+      } else if (policyTitle === 'Policy 3') {
+        return '700';
+      } else if (policyTitle === 'Policy 4') {
+        return '800';
+      } else if (policyTitle === 'Policy 5') {
+        return '900';
+      } else if (policyTitle === 'Policy 6') {
+        return '1000';
+      } else if (policyTitle === 'Policy 7') {
+        return '1100';
+      } else if (policyTitle === 'Policy 8') {
+        return '1200';
+      } else if (policyTitle === 'Policy 9') {
+        return '1300';
+      } else {
+        return '';
+      }
+    }
+
+    function getPolicyTerm(policyTitle) {
+      // Retrieve policy term from the master list of policies based on the policy title
+      // Replace this with your actual implementation
+      if (policyTitle === 'Policy 1' || policyTitle === 'Policy 2' || policyTitle === 'Policy 3') {
+        return '1 year';
+      } else if (policyTitle === 'Policy 4' || policyTitle === 'Policy 5' || policyTitle === 'Policy 6') {
+        return '2 years';
+      } else if (policyTitle === 'Policy 7' || policyTitle === 'Policy 8' || policyTitle === 'Policy 9') {
+        return '3 years';
+      } else {
+        return '';
+      }
+    }
+
+    function selectPolicy() {
+      alert('Policy selected successfully!');
+    }
+
+    function changePage(pageChange) {
+      currentPage += pageChange;
+      displayPolicies();
+    }
+
+    function displayPolicies() {
+      const policyTable = document.getElementById('policyTable');
+      const policies = getCustomerPolicies(); // Replace this with your actual implementation
+
+      // Clear existing table rows
+      const tableBody = policyTable.getElementsByTagName('tbody')[0];
+      while (tableBody.firstChild) {
+        tableBody.removeChild(tableBody.firstChild);
+      }
+
+      // Determine pagination boundaries
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = Math.min(startIndex + pageSize, policies.length);
+
+      // Display policies for the current page
+      for (let i = startIndex; i < endIndex; i++) {
+        const policy = policies[i];
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${policy.policyNo}</td>
+                         <td>${policy.commenceDate}</td>
+                         <td>${policy.status}</td>
+                         <td>${policy.policyTitle}</td>
+                         <td>${policy.premiumAmount}</td>
+                         <td>${policy.nextDueDate}</td>
+                         <td>${policy.sumAssured}</td>
+                         <td>${policy.nomineeStatus}</td>`;
+        tableBody.appendChild(row);
+      }
+
+      // Update pagination links
+      const paginationLinks = document.getElementsByClassName('pagination')[0].getElementsByTagName('a');
+      for (let i = 0; i < paginationLinks.length; i++) {
+        if (i === currentPage - 1) {
+          paginationLinks[i].classList.add('active');
+        } else {
+          paginationLinks[i].classList.remove('active');
+        }
+      }
+    }
+
+    // Sample function to retrieve customer policies (replace with your actual implementation)
+    function getCustomerPolicies() {
+      return [
+        { policyNo: 'Policy 1', commenceDate: '2023-01-01', status: 'Active', policyTitle: 'Policy Title 1', premiumAmount: '500', nextDueDate: '2024-01-01', sumAssured: '100,000', nomineeStatus: 'Registered' },
+        { policyNo: 'Policy 2', commenceDate: '2022-02-01', status: 'Matured', policyTitle: 'Policy Title 2', premiumAmount: '700', nextDueDate: '2023-02-01', sumAssured: '200,000', nomineeStatus: 'Registered' },
+        { policyNo: 'Policy 3', commenceDate: '2021-03-01', status: 'Suspended', policyTitle: 'Policy Title 3', premiumAmount: '900', nextDueDate: '2022-03-01', sumAssured: '300,000', nomineeStatus: 'Not Registered' },
+        // Add more policies as needed
+      ];
+    }
+
+    displayPolicies();
+  </script>
+</body>
+</html>
